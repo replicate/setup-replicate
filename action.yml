@@ -1,0 +1,39 @@
+name: Setup Replicate
+description: Install the Replicate CLI so you can interact with Replicate from GitHub Actions
+author: replicate
+branding:
+  icon: terminal
+  color: gray-dark
+
+inputs:
+  token:
+    required: true
+    description: "The token used to authenticate with Replicate. Get yours from https://replicate.com/account."
+  replicate-version:
+    description: "The version of the Replicate CLI to install"
+    required: false
+    default: latest
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@241d02265a546187fb2481c01689a6d5ac6d1549 # master
+
+    - name: Set up Replicate
+      shell: bash
+      run: |
+        brew tap replicate/tap
+        if [[ "${{ inputs.replicate-version }}" != "latest" ]]; then
+          brew install replicate@${{ inputs.replicate-version }}
+        else
+          brew install replicate
+        fi
+
+    - name: Log in to Replicate
+      shell: bash
+      if: ${{ inputs.token != '' }}
+      env:
+        REPLICATE_API_TOKEN: ${{ inputs.token }}
+      run: |
+        echo $REPLICATE_API_TOKEN | replicate auth login --token-stdin
