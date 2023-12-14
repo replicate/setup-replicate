@@ -13,9 +13,43 @@ Add a step to your workflow that uses this action:
 
 Now you can run the `replicate` CLI in subsequent steps.
 
-```yaml
-- name: Generate a haiku
-  run: replicate run meta/llama-2-70b-chat prompt="Write a haiku about llamas"
+
+## Example: Model CI/CD
+
+Here's an example that pushes a Cog model to Replicate whenever your repo's `main` branch is updated:
+
+```yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup Cog
+        uses: replicate/setup-cog@v1
+        with:
+          token: ${{ secrets.REPLICATE_API_TOKEN }}
+
+      - name: Setup Replicate
+        uses: replicate/setup-replicate@main
+        with:
+          token: ${{ secrets.REPLICATE_API_TOKEN }}
+
+      - name: Push the model
+        run: |
+          cog push r8.im/zeke/hello-world
+
+      - name: Run the model
+        run: |
+          cog run zeke/hello-world
 ```
 
 ### Inputs
