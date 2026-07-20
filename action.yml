@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up Homebrew
-      uses: Homebrew/actions/setup-homebrew@241d02265a546187fb2481c01689a6d5ac6d1549 # master
+      uses: Homebrew/actions/setup-homebrew@df4b09108a1de9d6f995fe68f302b3f68bd6d2ef # master
 
     - name: Set up Replicate
       shell: bash
